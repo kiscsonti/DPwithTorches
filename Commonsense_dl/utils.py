@@ -21,7 +21,7 @@ def vec(w):
     try:
         v = model.loc[w].as_matrix()
     except (KeyError):
-        v = pd.DataFrame(np.zeros(100))
+        v = np.zeros(100)
     return v
 
 

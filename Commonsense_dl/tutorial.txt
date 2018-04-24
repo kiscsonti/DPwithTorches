@@ -1,0 +1,3 @@
+First run the manipulate_yuanfuado.py to create the jsons
+Second vocab_to_lower
+Third reduce_glove

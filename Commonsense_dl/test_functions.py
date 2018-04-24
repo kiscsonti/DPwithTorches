@@ -11,6 +11,25 @@ def test_wordvec(words):
     for item in make_vector_from_words(words):
         print(len(item), item)
 
+
+def is_stimm():
+    from preprocess import read_vocab
+    from preprocess import vocab
+    glove_reduced = "data/glove_100d.txt"
+    vocab_file = "data/vocab"
+    read_vocab(vocab_file)
+    counter = 0
+    with open(glove_reduced, "r") as f:
+        for line in f.readlines():
+            counter += 1
+
+    if len(vocab) == counter:
+        print("YESSSSSS")
+
+    print(len(vocab), " <==> ", counter)
+
+
+
 if __name__ == '__main__':
-    test_wordvec(["pump", "rose", "skill"])
+    is_stimm()
 
