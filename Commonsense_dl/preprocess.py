@@ -1,5 +1,29 @@
-
 from xml.etree import ElementTree
+import unicodedata
+import os
+import json
+import string
+import numpy as np
+from collections import Counter
+import spacy
+
+vocab_file = "data/vocab"
+test_processed = "data/processed.txt"
+
+
+class Question(object):
+
+    def __init__(self, question, a1, a2):
+        self.question = question
+        self.a1 = a1
+        self.a2 = a2
+
+    def __str__(self):
+        print('QUESTION\n', self.question, '\n', self.a1, '\n', self.a2)
+        return ""
+
+    def generate(self):
+        return [self.question, self.a1[0], self.a2[0], self.a1[1]]
 
 
 class Text(object):
@@ -21,17 +45,11 @@ class Text(object):
     def get_len(self):
         return len(self.questions)
 
+    def generate(self):
+        for q in self.questions:
 
-class Question(object):
+            yield [self.text] + q.generate()
 
-    def __init__(self, question, a1, a2):
-        self.question = question
-        self.a1 = a1
-        self.a2 = a2
-
-    def __str__(self):
-        print('QUESTION\n', self.question, '\n', self.a1, '\n', self.a2)
-        return ""
 
 class Corpus(object):
 
@@ -59,52 +77,74 @@ class Corpus(object):
             osszeg += item.get_len()
         return osszeg
 
+    def generate(self):
+        for t in self.texts:
+            generator = t.generate()
 
-"""
-def get_vocabulary_and_data(*args):
-    vocabulary = set()
-    datas = []
+            while True:
+                try:
+                    yield next(generator)
+                except StopIteration:
+                    break
 
-    global vectorizer
-    analyze = vectorizer.build_analyzer()
 
-    for elem in args:
-        data = MyData()
-        print(elem)
-        parser = ElementTree.parse(elem)
-        instances = parser.findall('instance')
+class Dictionary(object):
+    NULL = '<NULL>'
+    UNK = '<UNK>'
+    START = 2
 
-        for inst in instances:
-            text = inst.find('text').text
-            corpus = [text]
-            questions = inst.find('questions').findall('question')
+    @staticmethod
+    def normalize(token):
+        return unicodedata.normalize('NFD', token)
 
-            for q in questions:
-                data_answer = []
-                ans = q.findall('answer')
-                targ = ans[0].attrib['correct']
-                if targ == "True":
-                    targ = 1
-                else:
-                    targ = 0
-                data.target.append(targ)
-                corpus.append(ans[0].attrib['text'])
-                corpus.append(ans[1].attrib['text'])
+    def __init__(self):
+        self.tok2ind = {self.NULL: 0, self.UNK: 1}
+        self.ind2tok = {0: self.NULL, 1: self.UNK}
 
-                data_answer.append(ans[0].attrib['text'])
-                data_answer.append(ans[1].attrib['text'])
-                data.data.append(data_answer)
+    def __len__(self):
+        return len(self.tok2ind)
 
-            for line in corpus:
-                tmp_voc = analyze(line)
-                vocabulary.update(tmp_voc)
+    def __iter__(self):
+        return iter(self.tok2ind)
 
-        datas.append(data)
+    def __contains__(self, key):
+        if type(key) == int:
+            return key in self.ind2tok
+        elif type(key) == str:
+            return self.normalize(key) in self.tok2ind
 
-    print("Vocabulary Done")
+    def __getitem__(self, key):
+        if type(key) == int:
+            return self.ind2tok.get(key, self.UNK)
+        if type(key) == str:
+            return self.tok2ind.get(self.normalize(key),
+                                    self.tok2ind.get(self.UNK))
 
-    return vocabulary, datas
-"""
+    def __setitem__(self, key, item):
+        if type(key) == int and type(item) == str:
+            self.ind2tok[key] = item
+        elif type(key) == str and type(item) == int:
+            self.tok2ind[key] = item
+        else:
+            raise RuntimeError('Invalid (key, item) types.')
+
+    def add(self, token):
+        token = self.normalize(token)
+        if token not in self.tok2ind:
+            index = len(self.tok2ind)
+            self.tok2ind[token] = index
+            self.ind2tok[index] = token
+
+    def tokens(self):
+        """Get dictionary tokens.
+
+        Return all the words indexed by this dictionary, except for special
+        tokens.
+        """
+        tokens = [k for k in self.tok2ind.keys()
+                  if k not in {'<NULL>', '<UNK>'}]
+        return tokens
+
 
 def get_data(*args):
     corp = Corpus()
@@ -137,3 +177,57 @@ def get_data(*args):
     print("Reading Done")
 
     return corp
+
+
+vocab = Dictionary()
+
+
+def read_vocab(file):
+    with open(file, "r") as f:
+        for line in f.readlines():
+            vocab.add(line.strip())
+
+
+def get_tokenized_text(text):
+    text_str = ""
+    nlp = spacy.load('en')
+    sentence = nlp(text)
+    first = True
+    for token in sentence:
+        if first:
+            first = False
+        else:
+            text_str += " "
+        text_str += token.text
+    return text_str
+
+
+def create_processed_data():
+    read_vocab(vocab_file)
+    with open(test_processed, "w"):
+        pass
+    corpus = get_data(train, dev)
+    g = corpus.generate()
+    while True:
+        try:
+            item = next(g)
+            record = dict()
+
+            record["text"] = get_tokenized_text(item[0])
+            record["question"] = get_tokenized_text(item[1])
+            record["answer_1"] = get_tokenized_text(item[2])
+            record["answer_2"] = get_tokenized_text(item[3])
+            with open(test_processed, "w+") as f:
+                json.dump(record, f)
+
+            return
+        except StopIteration:
+            break
+
+
+if __name__ == '__main__':
+    train = "train-data.xml"
+    dev = "dev-data.xml"
+    # corpus = get_data(train, dev)
+    # g = corpus.generate()
+    create_processed_data()
