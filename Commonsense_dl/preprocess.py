@@ -208,19 +208,31 @@ def create_processed_data():
         pass
     corpus = get_data(train, dev)
     g = corpus.generate()
+    counter = 0
+    temp_text = ""
+    tokenized_temp = ""
     while True:
         try:
+            if counter % 50 == 0:
+                print(counter)
             item = next(g)
             record = dict()
-
-            record["text"] = get_tokenized_text(item[0])
+            if item[0][:50] != temp_text[:50]:
+                record["text"] = get_tokenized_text(item[0])
+                temp_text = item[0]
+                tokenized_temp = record["text"]
+                print("nope")
+            else:
+                record["text"] = tokenized_temp
+                print(temp_text)
             record["question"] = get_tokenized_text(item[1])
             record["answer_1"] = get_tokenized_text(item[2])
             record["answer_2"] = get_tokenized_text(item[3])
             with open(test_processed, "w+") as f:
                 json.dump(record, f)
+                f.write("\n")
 
-            return
+            counter += 1
         except StopIteration:
             break
 
