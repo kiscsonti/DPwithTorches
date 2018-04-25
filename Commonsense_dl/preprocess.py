@@ -97,8 +97,18 @@ class Corpus(object):
             osszeg += item.get_len()
         return osszeg
 
-    def generate(self):
-        for t in self.texts:
+    def generate_train(self):
+        for t in self.texts[:self.hatar]:
+            generator = t.generate()
+
+            while True:
+                try:
+                    yield next(generator)
+                except StopIteration:
+                    break
+
+    def generate_dev(self):
+        for t in self.texts[self.hatar:]:
             generator = t.generate()
 
             while True:

@@ -6,13 +6,15 @@ import torch.nn as nn
 from torch.autograd import Variable
 from model import LSTMClassifier
 from preprocess import get_data, vocab
+from utils import make_data_container
 import sys
 
-epochs = 12
+epochs = 6
 batch_size = 32
 learning_rate = 0.01
-train = "train-data.xml"
-dev = "dev-data.xml"
+train = "data/train-data.xml"
+dev = "data/dev-data.xml"
+
 
 def adjust_learning_rate(optimizer, epoch):
     lr = learning_rate * (0.1 ** (epoch // 10))
@@ -30,13 +32,15 @@ if __name__ == '__main__':
     n_label = 2
     corpus = get_data(train, dev)
 
-
     ### create model
-    model = LSTMClassifier(embedding_dim=embedding_dim, hidden_dim=hidden_dim, label_size=n_label, batch_size=batch_size, use_gpu=False)
+    model = LSTMClassifier(embedding_dim=embedding_dim, hidden_dim=hidden_dim, label_size=n_label,
+                           batch_size=batch_size, use_gpu=False)
 
     ### data processing
+    train_data = make_data_container(train)
+    dev_data = make_data_container(dev)
 
-    #TODO: try out other optimizers
+    # TODO: try out other optimizers
     optimizer = optim.SGD(model.parameters(), lr=learning_rate)
     loss_function = nn.CrossEntropyLoss()
     train_loss_ = []
@@ -47,17 +51,14 @@ if __name__ == '__main__':
     for epoch in range(epochs):
         optimizer = adjust_learning_rate(optimizer, epoch)
 
-        batch_num = corpus.get_len_train()/batch_size
-        generator =
+        batch_num = len(train_data) / batch_size
         ## training epoch
         total_acc = 0.0
         total_loss = 0.0
         total = 0.0
         for i in range(batch_num):
-
-
-
-            train_inputs = Variable(train_inputs)
+            train_inputs = train_data[i*batch_size: (i+1)*batch_size]
+            test_labels = [ for l in train_data[i*batch_size: (i+1)*batch_size]]
 
             model.zero_grad()
             model.batch_size = len(train_labels)

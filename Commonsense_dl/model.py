@@ -23,6 +23,7 @@ class LSTMClassifier(nn.Module):
         self.hidden2label = nn.Linear(hidden_dim, label_size)
         self.hidden = self.init_hidden()
         sys.exit(0)
+
     def init_hidden(self):
         if self.use_gpu:
             h0 = Variable(torch.zeros(1, self.batch_size, self.hidden_dim).cuda())
