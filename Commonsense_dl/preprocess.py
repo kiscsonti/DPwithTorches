@@ -28,6 +28,11 @@ class Question(object):
     def generate(self):
         return [self.question, self.a1[0], self.a2[0], self.a1[1]]
 
+    def get_len_q(self):
+        return len(self.question)
+
+    def get_len_c(self):
+        return max(len(self.a1[0]), len(self.a1[1]))
 
 class Text(object):
 
@@ -52,6 +57,18 @@ class Text(object):
         for q in self.questions:
 
             yield [self.text] + q.generate()
+
+    def get_max_lens(self):
+        q_m = self.questions[0].get_len_q()
+        c_m = self.questions[0].get_len_c()
+        for item in self.questions:
+            tmp_q = item.get_len_q()
+            tmp_c = item.get_len_c()
+            if tmp_c > c_m:
+                c_m = tmp_c
+            if tmp_q > q_m:
+                q_m = tmp_q
+        return len(self.text), q_m, c_m
 
 
 class Corpus(object):
@@ -89,6 +106,19 @@ class Corpus(object):
                     yield next(generator)
                 except StopIteration:
                     break
+
+    def get_max_lens(self):
+        p_m, q_m, c_m = self.texts[0].get_max_lens()
+        for item in self.texts:
+            tmp_p, tmp_q, tmp_c = item.get_max_lens()
+            if tmp_p > p_m:
+                p_m = tmp_p
+            if tmp_q > q_m:
+                q_m = tmp_q
+            if tmp_c > c_m:
+                c_m = tmp_c
+        return p_m, q_m, c_m
+
 
 
 class Dictionary(object):
@@ -177,9 +207,6 @@ def make_vocab(record, is_nltk=True):
         put_in_vocab(var)
 
 
-vocab = dict()
-
-
 def put_in_vocab(tokens):
     for token in tokens:
         if token not in vocab:
@@ -223,11 +250,13 @@ def get_data(*args):
 
 vocab = Dictionary()
 
-
 def read_vocab(file):
     with open(file, "r") as f:
         for line in f.readlines():
             vocab.add(line.strip())
+
+
+read_vocab(vocab_file)
 
 
 def get_tokenized_text(text):
@@ -325,9 +354,9 @@ def printout():
 if __name__ == '__main__':
     train = "data/train-data.xml"
     dev = "data/dev-data.xml"
-    read_vocab(vocab_file)
-    #vocab_to_low(vocab_file)
-    reduced_glove()
+    # read_vocab(vocab_file)
+    # vocab_to_low(vocab_file)
+    # reduced_glove()
     # corpus = get_data(train, dev)
     # g = corpus.generate()
     #create_processed_data()

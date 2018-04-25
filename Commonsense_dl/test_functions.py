@@ -1,3 +1,4 @@
+from preprocess import get_data
 def print_params(text, question, a1, a2):
     print("__TEXT__\n", text)
     print(question)
@@ -27,8 +28,6 @@ def is_stimm():
         print("YESSSSSS")
 
     print(len(vocab), " <==> ", counter)
-
-
 
 if __name__ == '__main__':
     is_stimm()

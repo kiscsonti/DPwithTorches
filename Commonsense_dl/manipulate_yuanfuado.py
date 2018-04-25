@@ -27,6 +27,11 @@ def filter_needed(outfile, infile):
 if __name__ == '__main__':
 
     filter_needed(outfile="data/my_processed_train.json",
-                  infile="/media/kiscsonti/521493CD1493B289/git/live/commonsense-rc/data/train-data-processed.json")
+                  infile="/home/kardosp/PycharmProjects/DL/git/commonsense-rc/data/train-data-processed.json")
     filter_needed(outfile="data/my_processed_dev.json",
-                  infile="/media/kiscsonti/521493CD1493B289/git/live/commonsense-rc/data/dev-data-processed.json")
+                  infile="/home/kardosp/PycharmProjects/DL/git/commonsense-rc/data/dev-data-processed.json")
+
+    # filter_needed(outfile="data/my_processed_train.json",
+    #               infile="/media/kiscsonti/521493CD1493B289/git/live/commonsense-rc/data/train-data-processed.json")
+    # filter_needed(outfile="data/my_processed_dev.json",
+    #               infile="/media/kiscsonti/521493CD1493B289/git/live/commonsense-rc/data/dev-data-processed.json")

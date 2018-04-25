@@ -5,7 +5,8 @@ import csv
 
 
 #model = spacy.load('en_core_web_sm')
-glove_data_file = """/media/kiscsonti/521493CD1493B289/egyetem/kutatas/data/glove.6B/glove.6B.100d.txt"""
+glove_data_file = "data/glove.6B.100d.txt"
+# glove_data_file = """/media/kiscsonti/521493CD1493B289/egyetem/kutatas/data/glove.6B/glove.6B.100d.txt"""
 model = pd.read_table(glove_data_file, sep=" ", index_col=0, header=None, quoting=csv.QUOTE_NONE)
 
 
