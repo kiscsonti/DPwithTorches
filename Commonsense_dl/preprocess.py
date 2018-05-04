@@ -11,6 +11,7 @@ import nltk
 vocab_file = "data/vocab"
 test_processed = "data/processed.txt"
 glove_reduced = "data/glove_100d.txt"
+char_vocab_file = "data/char_vocab.txt"
 
 
 class Question(object):
@@ -257,15 +258,21 @@ def get_data(*args):
     return corp
 
 
-
 def read_vocab(file):
     with open(file, "r") as f:
         for line in f.readlines():
             vocab.add(line.strip())
 
 
-vocab = Dictionary()
+def read_char_vocab(file):
+    with open(file, "r") as f:
+        for line in f.readlines():
+            char_vocab.add(line.strip())
+
+
+vocab, char_vocab = Dictionary(), Dictionary()
 read_vocab(vocab_file)
+read_char_vocab(char_vocab_file)
 
 
 def get_tokenized_text(text):

@@ -86,7 +86,7 @@ class Dictionary(object):
                   if k not in {'<NULL>', '<UNK>'}]
         return tokens
 
-vocab, pos_vocab, ner_vocab, rel_vocab = Dictionary(), Dictionary(), Dictionary(), Dictionary()
+vocab, pos_vocab, ner_vocab, rel_vocab, char_vocab = Dictionary(), Dictionary(), Dictionary(), Dictionary(), Dictionary()
 def gen_race_vocab(data):
     race_vocab = Dictionary()
     build_vocab()
@@ -104,7 +104,7 @@ def gen_race_vocab(data):
     writer.close()
 
 def build_vocab(data=None):
-    global vocab, pos_vocab, ner_vocab, rel_vocab
+    global vocab, pos_vocab, ner_vocab, rel_vocab, char_vocab
     # build word vocabulary
     if os.path.exists('../data/vocab'):
         print('Load vocabulary from ../data/vocab...')
@@ -162,6 +162,15 @@ def build_vocab(data=None):
     for w in open('../data/rel_vocab', encoding='utf-8'):
         rel_vocab.add(w.strip())
     print('Rel vocabulary size: %d' % len(rel_vocab))
+
+    if os.path.exists('../data/char_vocab.txt'):
+        print('Load character vocabulary from ../data/char_vocab...')
+        with open("../data/char_vocab.txt", "r") as f:
+            for line in f.readlines():
+                char_vocab.add(line[:1])
+        print('Character vocabulary size: %d' % len(char_vocab))
+    else:
+        print("There is no character vocab file dudi, do something about it")
 
 def gen_submission(data, prediction):
     assert len(data) == len(prediction)
@@ -241,6 +250,25 @@ def eval_based_on_outputs(path):
     assert len(prediction) == len(gold)
     acc = sum([int(p == g) for p, g in zip(prediction, gold)]) / len(gold)
     print('Accuracy on dev_data: %f' % acc)
+
+
+def text_to_char_index(text):
+    indexed = []
+    for char in text:
+        indexed.append(char_vocab[char])
+    return indexed
+
+
+def text_to_grams(text, length=5):
+    partials = []
+
+    if len(text) < length:
+        partials.append(text)
+    else:
+        for i in range(length, len(text)):
+            partials.append(text[i-length:i])
+
+    return partials
 
 if __name__ == '__main__':
     # build_vocab()

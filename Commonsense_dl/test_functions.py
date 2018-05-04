@@ -1,4 +1,5 @@
 from preprocess import get_data
+import preprocess
 import utils
 def print_params(text, question, a1, a2):
     print("__TEXT__\n", text)
@@ -33,8 +34,8 @@ def is_stimm():
 
 def test_text_to_grams():
     txt = "What are you doing my boi!"
-    txt = "peti"
-
+    # txt = "peti"
+    txt = utils.text_to_char_index(txt)
     partials = utils.text_to_grams(txt, 5)
 
     print(partials)

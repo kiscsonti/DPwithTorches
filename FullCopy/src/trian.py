@@ -73,7 +73,7 @@ class TriAN(nn.Module):
         self.p_c_bilinear = nn.Linear(doc_hidden_size, choice_hidden_size)
         self.q_c_bilinear = nn.Linear(question_hidden_size, choice_hidden_size)
 
-    def forward(self, p, p_mask, q, q_mask, c, c_mask):
+    def forward(self, p, p_mask, q, q_mask, c, c_mask, d_chars, q_chars, c_chars):
         # print("passage", p, "\n", len(p), type(p))
         # print("passage pos", p_pos, "\n", len(p_pos), type(p_pos))
         # print("passage ner", p_ner, "\n", len(p_ner), type(p_ner))
@@ -87,6 +87,8 @@ class TriAN(nn.Module):
         # print("passage question relation", p_q_relation, "\n", len(p_q_relation), type(p_q_relation))
         # print("passage choice relation", p_c_relation, "\n", len(p_c_relation), type(p_c_relation))
         p_emb, q_emb, c_emb = self.embedding(p), self.embedding(q), self.embedding(c)
+        #TODO: create convolutional layer that works xD :)
+        # d_chars, q_chars, c_chars =
 
         # Dropout on embeddings
         if self.args.dropout_emb > 0:

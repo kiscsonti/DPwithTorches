@@ -30,6 +30,7 @@ parser.add_argument('--ner_emb_dim', type=int, default=8, help='Embedding dimens
 parser.add_argument('--rel_emb_dim', type=int, default=10, help='Embedding dimension for ConceptNet relations')
 parser.add_argument('--seed', type=int, default=1234, help='random seed')
 parser.add_argument('--test_mode', type='bool', default=False, help='In test mode, validation data will be used for training')
+parser.add_argument('--n_grams', type=int, default=5, help='Number of characters in n-grams')
 args = parser.parse_args()
 
 print(args)

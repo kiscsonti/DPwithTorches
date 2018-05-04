@@ -5,6 +5,8 @@ import csv
 import preprocess
 import json
 import doc
+from preprocess import char_vocab
+import config
 
 # model = spacy.load('en_core_web_sm')
 glove_data_file = "data/glove.6B.100d.txt"
@@ -48,7 +50,8 @@ def load_data(filename):
     return records
 
 
-def text_to_grams(text, length=5):
+def text_to_grams(text):
+    length = config.args.n_grams
     partials = []
 
     if len(text) < length:
@@ -59,5 +62,13 @@ def text_to_grams(text, length=5):
 
     return partials
 
+
 def text_to_char_index(text):
-    pass
+    indexed = []
+    for char in text:
+        indexed.append(char_vocab[char])
+    return indexed
+
+
+if __name__ == '__main__':
+    text_to_char_index("petigep hahah")
