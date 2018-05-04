@@ -1,6 +1,5 @@
 import torch
 import numpy as np
-from preprocess import vocab
 
 class Example:
 
