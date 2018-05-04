@@ -19,9 +19,12 @@ class Example:
         # self.d_char = torch.LongTensor(text_to_grams(text_to_char_index(self.passage)))
         # self.q_char = torch.LongTensor(text_to_grams(text_to_char_index(self.question)))
         # self.c_char = torch.LongTensor(text_to_grams(text_to_char_index(self.choice)))
-        self.d_char = torch.LongTensor(text_to_char_index(self.passage))
-        self.q_char = torch.LongTensor(text_to_char_index(self.question))
-        self.c_char = torch.LongTensor(text_to_char_index(self.choice))
+        # self.d_char = torch.LongTensor(text_to_char_index(self.passage))
+        # self.q_char = torch.LongTensor(text_to_char_index(self.question))
+        # self.c_char = torch.LongTensor(text_to_char_index(self.choice))
+        self.d_char = torch.LongTensor([char_vocab[w] for w in self.passage.split()])
+        self.q_char = torch.LongTensor([char_vocab[w] for w in self.question.split()])
+        self.c_char = torch.LongTensor([char_vocab[w] for w in self.choice.split()])
 
     def __str__(self):
         return 'Passage: %s\n Question: %s\n Answer: %s, Label: %d' % (self.passage,
@@ -69,4 +72,4 @@ def batchify(batch_data):
     c_chars, c_chars_mask = _to_indices_and_mask([ex.c_char for ex in batch_data])
 
     y = torch.FloatTensor([ex.label for ex in batch_data])
-    return p, p_mask, q, q_mask, c, c_mask, y, d_chars, q_chars, c_chars
+    return p, p_mask, q, q_mask, c, c_mask, d_chars, d_chars_mask, q_chars, q_chars_mask, c_chars, c_chars_mask, y
