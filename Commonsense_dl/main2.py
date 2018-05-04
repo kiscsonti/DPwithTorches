@@ -58,7 +58,8 @@ if __name__ == '__main__':
         total = 0.0
         for i in range(batch_num):
             train_inputs = train_data[i*batch_size: (i+1)*batch_size]
-            test_labels = [ for l in train_data[i*batch_size: (i+1)*batch_size]]
+            #TODO: itt hagytam abba
+            #test_labels = [ for l in train_data[i*batch_size: (i+1)*batch_size]]
 
             model.zero_grad()
             model.batch_size = len(train_labels)
