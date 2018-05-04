@@ -6,7 +6,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 from model import LSTMClassifier
 from preprocess import get_data, vocab
-from utils import make_data_container
+from utils import load_data
 import sys
 
 epochs = 6
@@ -37,8 +37,8 @@ if __name__ == '__main__':
                            batch_size=batch_size, use_gpu=False)
 
     ### data processing
-    train_data = make_data_container(train)
-    dev_data = make_data_container(dev)
+    train_data = load_data(train)
+    dev_data = load_data(dev)
 
     # TODO: try out other optimizers
     optimizer = optim.SGD(model.parameters(), lr=learning_rate)

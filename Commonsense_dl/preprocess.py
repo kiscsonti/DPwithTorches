@@ -5,7 +5,6 @@ import json
 import string
 import numpy as np
 from collections import Counter
-from doc import Example
 import spacy
 import nltk
 
@@ -258,7 +257,6 @@ def get_data(*args):
     return corp
 
 
-vocab = Dictionary()
 
 def read_vocab(file):
     with open(file, "r") as f:
@@ -266,6 +264,7 @@ def read_vocab(file):
             vocab.add(line.strip())
 
 
+vocab = Dictionary()
 read_vocab(vocab_file)
 
 
@@ -353,12 +352,6 @@ def vocab_to_low(v_file):
             f.write(word)
             f.write('\n')
 
-
-def printout():
-    with open(test_processed, "r") as f:
-        for line in f.readlines():
-            x = Example(json.loads(line))
-            print(x)
 
 
 if __name__ == '__main__':

@@ -39,15 +39,11 @@ def extend_array(target_size, arr):
     return arr
 
 
-def make_data_container(train=True):
+def load_data(filename):
     records = []
-    if train:
-        with open(processed_train, "r") as f:
-            for line in f.readlines():
 
-                records.append(doc.Example(json.loads(line)))
-    else:
-        with open(processed_dev, "r") as f:
-            for line in f.readlines():
-                records.append(doc.Example(json.loads(line)))
+    with open(filename, "r") as f:
+        for line in f.readlines():
+            records.append(doc.Example(json.loads(line)))
     return records
+
