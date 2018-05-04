@@ -1,4 +1,5 @@
 from preprocess import get_data
+import utils
 def print_params(text, question, a1, a2):
     print("__TEXT__\n", text)
     print(question)
@@ -29,6 +30,17 @@ def is_stimm():
 
     print(len(vocab), " <==> ", counter)
 
+
+def test_text_to_grams():
+    txt = "What are you doing my boi!"
+    txt = "peti"
+
+    partials = utils.text_to_grams(txt, 5)
+
+    print(partials)
+
+
 if __name__ == '__main__':
-    is_stimm()
+    test_text_to_grams()
+    #is_stimm()
 

@@ -47,3 +47,17 @@ def load_data(filename):
             records.append(doc.Example(json.loads(line)))
     return records
 
+
+def text_to_grams(text, length=5):
+    partials = []
+
+    if len(text) < length:
+        partials.append(text)
+    else:
+        for i in range(length, len(text)):
+            partials.append(text[i-length:i])
+
+    return partials
+
+def text_to_char_index(text):
+    pass

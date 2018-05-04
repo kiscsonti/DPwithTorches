@@ -6,6 +6,7 @@ import time
 
 sen_len = 10
 
+
 def main():
     train = "data/train-data.xml"
     dev = "data/dev-data.xml"
@@ -15,10 +16,10 @@ def main():
 
     # res = np.array(corpus.get_feature(to_wordvec, sen_len))
 
-
     print(corpus.get_max_lens())
     end = time.time()
     print(end - start)
+
 
 if __name__ == '__main__':
     main()
