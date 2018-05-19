@@ -296,3 +296,44 @@ def weighted_avg(x, weights):
         x_avg: batch * hdim
     """
     return weights.unsqueeze(1).bmm(x).squeeze(1)
+
+"""
+    Char embedding creator
+"""
+class StackedCRNNClassifier(nn.Module):
+    def __init__(self, vocab_size, label_size):
+        super(StackedCRNNClassifier, self).__init__()
+
+        self.embedding = nn.Embedding(
+            vocab_size, 8, padding_idx=0)
+        self.embedding.weight.data[:2].normal_(0, 0.1)
+
+        self.convs = nn.ModuleList([
+            nn.Conv2d(1, 128, (3, 8)),
+            nn.Conv2d(1, 128, (3, 128))
+        ])
+
+        self.lstm = nn.GRU(
+            input_size=128,
+            hidden_size=128,
+            num_layers=1,
+            dropout=0.5,
+            bidirectional=False)
+        self.dense = nn.Linear(
+            in_features=128, out_features=label_size)
+
+    def forward(self, entity_ids, seq_len=0):
+
+        x = self.embedding(entity_ids)
+        # x = x.transpose(0, 1)
+
+        for i, conv in enumerate(self.convs):
+            # Since we are using conv2d, we need to add extra outer dimension
+            x = x.unsqueeze(1)
+            x = F.relu(conv(x)).squeeze(3)
+            x = x.transpose(1, 2)
+
+        out, _ = self.lstm(x.transpose(0, 1))
+        last_output = out[-1, :, :]
+        logits = self.dense(last_output)
+        return logits
